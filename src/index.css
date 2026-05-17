@@ -1,0 +1,172 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  background: #eef1f2;
+  color: #111827;
+  overflow: hidden;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes plus-spin-once {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  45% {
+    transform: rotate(180deg) scale(1.08);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.plus-spin-once {
+  animation: plus-spin-once 380ms ease-out;
+}
+
+@keyframes counter-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.counter-pop {
+  animation: counter-pop 380ms ease-out;
+}
+
+@keyframes fairy-dust {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
+      scale(0.1);
+  }
+}
+
+.fairy-dust {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.fairy-dust span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background: #20b894;
+  animation: fairy-dust 620ms ease-out forwards;
+}
+
+.fairy-dust span:nth-child(1) {
+  --x: -22px;
+  --y: -18px;
+}
+
+.fairy-dust span:nth-child(2) {
+  --x: 20px;
+  --y: -22px;
+  background: #fbbf24;
+  animation-delay: 40ms;
+}
+
+.fairy-dust span:nth-child(3) {
+  --x: -18px;
+  --y: 20px;
+  background: #60a5fa;
+  animation-delay: 70ms;
+}
+
+.fairy-dust span:nth-child(4) {
+  --x: 24px;
+  --y: 18px;
+  background: #34d399;
+  animation-delay: 100ms;
+}
+
+.fairy-dust span:nth-child(5) {
+  --x: 0px;
+  --y: -30px;
+  background: #a78bfa;
+  animation-delay: 130ms;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.food-results-enter {
+  animation: foodResultsEnter 180ms ease-out;
+}
+
+@keyframes foodResultsEnter {
+  from {
+    opacity: 0.35;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
