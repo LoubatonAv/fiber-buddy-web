@@ -20,7 +20,7 @@ export type MealCategory = "breakfast" | "lunch" | "dinner" | "snacks";
 
 export type MainTab = "diary" | "foods" | "ideas" | "profile";
 
-export type AddMode = "recent" | "frequent" | "favorites" | "recipes" | "all";
+export type AddMode = "recent" | "frequent" | "favorites" | "recipes" | "all" | "combo";
 
 export type UserProfile = {
   age?: number;

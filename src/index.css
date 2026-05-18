@@ -1,102 +1,79 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
 @import "tailwindcss";
+
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #0f172a;
+  background: #f7f8f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
 html,
 body,
 #root {
   height: 100%;
-  min-height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: "Nunito", ui-sans-serif, system-ui, sans-serif;
-  background: #eef1f2;
-  color: #111827;
-  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
-button {
-  -webkit-tap-highlight-color: transparent;
+.app-soft-bg {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(32, 184, 148, 0.08),
+      transparent 36%
+    ),
+    linear-gradient(180deg, #fbfdfc 0%, #f7f8f8 45%, #f3f5f5 100%);
 }
 
-* {
-  box-sizing: border-box;
+.page-enter {
+  animation: pageEnter 220ms ease-out both;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.food-results-enter {
+  animation: foodResultsEnter 180ms ease-out both;
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-@keyframes plus-spin-once {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-
-  45% {
-    transform: rotate(180deg) scale(1.08);
-  }
-
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
-}
-
-.plus-spin-once {
-  animation: plus-spin-once 380ms ease-out;
-}
-
-@keyframes counter-pop {
-  0% {
-    transform: scale(1);
-  }
-
-  35% {
-    transform: scale(1.12);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+.card-pop {
+  animation: cardPop 220ms ease-out both;
 }
 
 .counter-pop {
-  animation: counter-pop 380ms ease-out;
+  animation: counterPop 260ms ease-out both;
 }
 
-@keyframes fairy-dust {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.4);
-  }
-
-  20% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
-      scale(0.1);
-  }
+.plus-spin-once {
+  animation: plusSpinOnce 380ms ease-out both;
 }
 
 .fairy-dust {
   pointer-events: none;
   position: absolute;
-  inset: 0;
-  z-index: 5;
+  inset: -14px;
+  z-index: 0;
 }
 
 .fairy-dust span {
@@ -107,56 +84,44 @@ button {
   width: 6px;
   border-radius: 9999px;
   background: #20b894;
-  animation: fairy-dust 620ms ease-out forwards;
+  opacity: 0;
+  animation: fairyDust 650ms ease-out forwards;
 }
 
 .fairy-dust span:nth-child(1) {
-  --x: -22px;
+  --x: -18px;
   --y: -18px;
 }
-
 .fairy-dust span:nth-child(2) {
-  --x: 20px;
-  --y: -22px;
-  background: #fbbf24;
+  --x: 18px;
+  --y: -16px;
   animation-delay: 40ms;
 }
-
 .fairy-dust span:nth-child(3) {
-  --x: -18px;
-  --y: 20px;
-  background: #60a5fa;
-  animation-delay: 70ms;
+  --x: -22px;
+  --y: 12px;
+  animation-delay: 80ms;
 }
-
 .fairy-dust span:nth-child(4) {
-  --x: 24px;
-  --y: 18px;
-  background: #34d399;
-  animation-delay: 100ms;
+  --x: 20px;
+  --y: 16px;
+  animation-delay: 110ms;
 }
-
 .fairy-dust span:nth-child(5) {
   --x: 0px;
-  --y: -30px;
-  background: #a78bfa;
-  animation-delay: 130ms;
+  --y: -24px;
+  animation-delay: 140ms;
 }
 
-@keyframes fadeSlideIn {
+@keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.food-results-enter {
-  animation: foodResultsEnter 180ms ease-out;
 }
 
 @keyframes foodResultsEnter {
@@ -164,9 +129,196 @@ button {
     opacity: 0.35;
     transform: translateY(6px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.985) translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes counterPop {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes plusSpinOnce {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  55% {
+    transform: rotate(180deg) scale(1.08);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes fairyDust {
+  from {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
+      scale(0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbars everywhere, but keep scrolling working */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+}
+
+/* General app polish */
+button {
+  transition:
+    transform 140ms ease,
+    opacity 140ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+input,
+textarea,
+select {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 140ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+/* Soft page/card entrance */
+@keyframes soft-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.soft-rise {
+  animation: soft-rise 360ms ease-out both;
+}
+
+/* Small happy pop */
+@keyframes tiny-pop {
+  0% {
+    transform: scale(0.96);
+  }
+
+  55% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tiny-pop {
+  animation: tiny-pop 260ms ease-out both;
+}
+
+/* Owl letter */
+@keyframes owl-float-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) rotate(-2deg) scale(0.96);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(2px) rotate(1deg) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes owl-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.owl-letter-enter {
+  animation: owl-float-in 520ms ease-out both;
+}
+
+.owl-bob {
+  animation: owl-bob 2.4s ease-in-out infinite;
+}
+
+/* Hide scrollbars but keep scrolling */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }

@@ -7,6 +7,7 @@ import { Ideas } from "./Ideas";
 import { MealDetails } from "./MealDetails";
 import { Profile } from "./Profile";
 import { getTodayKey } from "../lib/fiber";
+import { FoodsHub } from "./FoodsHub";
 import {
   loadEntries,
   loadFoods,
@@ -111,27 +112,23 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
   }
 
   function deleteRecipe(recipeId: string) {
-    const nextRecipes = recipes.filter((recipe) => recipe.id !== recipeId);
-    const nextFoods = foods.filter((food) => food.recipeId !== recipeId);
     const deletedFoodIds = new Set(
       foods.filter((food) => food.recipeId === recipeId).map((food) => food.id),
     );
 
-    const nextEntries = entries.filter(
-      (entry) => !deletedFoodIds.has(entry.foodId),
+    persistRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
+    persistFoods(foods.filter((food) => food.recipeId !== recipeId));
+    persistEntries(
+      entries.filter((entry) => !deletedFoodIds.has(entry.foodId)),
     );
-
-    persistRecipes(nextRecipes);
-    persistFoods(nextFoods);
-    persistEntries(nextEntries);
   }
 
   function toggleFoodFavorite(foodId: string) {
-    const nextFoods = foods.map((food) =>
-      food.id === foodId ? { ...food, isFavorite: !food.isFavorite } : food,
+    persistFoods(
+      foods.map((food) =>
+        food.id === foodId ? { ...food, isFavorite: !food.isFavorite } : food,
+      ),
     );
-
-    persistFoods(nextFoods);
   }
 
   function deleteFood(foodId: string) {
@@ -142,11 +139,8 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
       return;
     }
 
-    const nextFoods = foods.filter((food) => food.id !== foodId);
-    const nextEntries = entries.filter((entry) => entry.foodId !== foodId);
-
-    persistFoods(nextFoods);
-    persistEntries(nextEntries);
+    persistFoods(foods.filter((food) => food.id !== foodId));
+    persistEntries(entries.filter((entry) => entry.foodId !== foodId));
   }
 
   function openAdd(meal: MealCategory) {
@@ -179,6 +173,14 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
     });
 
     return nextEntry;
+  }
+
+  function quickAddFood(food: Food, mealCategory: MealCategory) {
+    addEntry(
+      food,
+      food.servingGrams ?? lastAmounts[food.id] ?? 100,
+      mealCategory,
+    );
   }
 
   function deleteEntry(id: string) {
@@ -248,8 +250,8 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-8">
+    <div className="flex min-h-0 flex-1 flex-col app-soft-bg">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-8 page-enter">
         {tab === "diary" ? (
           <Diary
             profile={profile}
@@ -265,7 +267,7 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
         ) : null}
 
         {tab === "foods" ? (
-          <Foods
+          <FoodsHub
             foods={foods}
             recipes={recipes}
             onAddFood={addFood}
@@ -273,6 +275,7 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
             onDeleteFood={deleteFood}
             onDeleteRecipe={deleteRecipe}
             onToggleFoodFavorite={toggleFoodFavorite}
+            onImportFood={addEntry}
           />
         ) : null}
 
@@ -282,6 +285,8 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
             entries={entries}
             profile={profile}
             totalFiber={totalFiber}
+            lastAmounts={lastAmounts}
+            onQuickAdd={quickAddFood}
           />
         ) : null}
 

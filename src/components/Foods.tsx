@@ -15,9 +15,14 @@ type Props = {
 
 type Tab = "all" | "favorites" | "recipes";
 
+function createId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : String(Date.now() + Math.random());
+}
+
 export function Foods({
   foods,
-  recipes,
   onAddFood,
   onAddRecipe,
   onDeleteFood,
@@ -34,15 +39,22 @@ export function Foods({
   const [fiber, setFiber] = useState("");
   const [emoji, setEmoji] = useState("🍽️");
 
+  const regularFoods = useMemo(
+    () => foods.filter((food) => food.source !== "recipe"),
+    [foods],
+  );
+
+  const recipeFoods = useMemo(
+    () => foods.filter((food) => food.source === "recipe"),
+    [foods],
+  );
+
   const [recipeName, setRecipeName] = useState("");
   const [recipeEmoji, setRecipeEmoji] = useState("🍲");
   const [recipeServings, setRecipeServings] = useState("1");
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([
-    { foodId: foods[0]?.id ?? "", amountGrams: 100 },
+    { foodId: regularFoods[0]?.id ?? "", amountGrams: 100 },
   ]);
-
-  const regularFoods = foods.filter((food) => food.source !== "recipe");
-  const recipeFoods = foods.filter((food) => food.source === "recipe");
 
   const filteredFoods = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -54,20 +66,24 @@ export function Foods({
           ? recipeFoods
           : foods;
 
-    if (!query) return list;
+    if (!query) {
+      return [...list].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return a.name.localeCompare(b.name);
+      });
+    }
 
     return list
       .filter((food) => food.name.toLowerCase().includes(query))
       .sort((a, b) => {
         const aName = a.name.toLowerCase();
         const bName = b.name.toLowerCase();
-
         const aStarts = aName.startsWith(query);
         const bStarts = bName.startsWith(query);
 
         if (aStarts && !bStarts) return -1;
         if (!aStarts && bStarts) return 1;
-
         if (a.isFavorite && !b.isFavorite) return -1;
         if (!a.isFavorite && b.isFavorite) return 1;
 
@@ -95,7 +111,7 @@ export function Foods({
     }
 
     onAddFood({
-      id: crypto.randomUUID(),
+      id: createId(),
       name: name.trim(),
       fiberPer100g: fiberNumber,
       emoji: emoji.trim() || "🍽️",
@@ -124,9 +140,12 @@ export function Foods({
   }
 
   function removeIngredient(index: number) {
-    setIngredients((current) =>
-      current.filter((_, currentIndex) => currentIndex !== index),
-    );
+    setIngredients((current) => {
+      const next = current.filter((_, currentIndex) => currentIndex !== index);
+      return next.length > 0
+        ? next
+        : [{ foodId: regularFoods[0]?.id ?? "", amountGrams: 100 }];
+    });
   }
 
   function calculateRecipe() {
@@ -177,7 +196,7 @@ export function Foods({
       return;
     }
 
-    const recipeId = crypto.randomUUID();
+    const recipeId = createId();
     const recipeFoodId = `recipe-${recipeId}`;
     const servingGrams = calculation.totalGrams / servings;
 
@@ -203,7 +222,6 @@ export function Foods({
     };
 
     onAddRecipe(recipe, recipeFood);
-
     resetRecipeForm();
     setIsAddingRecipe(false);
     setTab("recipes");
@@ -220,7 +238,7 @@ export function Foods({
           </h1>
 
           <p className="mt-3 text-base font-semibold text-slate-500">
-            Your personal fiber database.
+            Foods, recipes and favorites for quick fiber tracking.
           </p>
         </div>
 
@@ -257,10 +275,10 @@ export function Foods({
             key={item}
             type="button"
             onClick={() => setTab(item)}
-            className={`h-11 rounded-2xl text-sm font-black capitalize transition ${
+            className={`h-11 rounded-2xl text-sm font-black capitalize transition active:scale-[0.98] ${
               tab === item
                 ? "bg-slate-900 text-white"
-                : "bg-white text-slate-600"
+                : "bg-white text-slate-600 shadow-sm"
             }`}
           >
             {item}
@@ -271,7 +289,7 @@ export function Foods({
       <input
         value={search}
         onChange={(event) => setSearch(event.target.value)}
-        placeholder="Search foods"
+        placeholder="Search foods or recipes"
         className="h-14 w-full rounded-2xl border-2 border-slate-200 bg-white px-4 text-base font-semibold outline-none transition focus:border-emerald-500"
       />
 
@@ -282,7 +300,7 @@ export function Foods({
             setIsAddingFood(true);
             setIsAddingRecipe(false);
           }}
-          className="rounded-2xl bg-emerald-500 py-3 text-sm font-black text-white"
+          className="rounded-2xl bg-emerald-500 py-3 text-sm font-black text-white transition active:scale-[0.98]"
         >
           + Custom food
         </button>
@@ -293,14 +311,14 @@ export function Foods({
             setIsAddingRecipe(true);
             setIsAddingFood(false);
           }}
-          className="rounded-2xl bg-slate-900 py-3 text-sm font-black text-white"
+          className="rounded-2xl bg-slate-900 py-3 text-sm font-black text-white transition active:scale-[0.98]"
         >
           + Recipe
         </button>
       </div>
 
       {isAddingFood ? (
-        <Card className="mt-4 border-2 border-slate-200 p-4">
+        <Card className="mt-4 border-2 border-slate-200 p-4 card-pop">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-xl font-black text-slate-950">
               Add custom food
@@ -325,7 +343,6 @@ export function Foods({
               placeholder="Food name"
               className="h-12 rounded-2xl border-2 border-slate-200 px-4 font-semibold outline-none transition focus:border-emerald-500"
             />
-
             <input
               value={fiber}
               onChange={(event) => setFiber(event.target.value)}
@@ -333,7 +350,6 @@ export function Foods({
               inputMode="decimal"
               className="h-12 rounded-2xl border-2 border-slate-200 px-4 font-semibold outline-none transition focus:border-emerald-500"
             />
-
             <input
               value={emoji}
               onChange={(event) => setEmoji(event.target.value)}
@@ -353,10 +369,9 @@ export function Foods({
       ) : null}
 
       {isAddingRecipe ? (
-        <Card className="mt-4 border-2 border-slate-200 p-4">
+        <Card className="mt-4 border-2 border-slate-200 p-4 card-pop">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-xl font-black text-slate-950">Add recipe</h2>
-
             <button
               type="button"
               onClick={() => {
@@ -384,7 +399,6 @@ export function Foods({
                 placeholder="Emoji"
                 className="h-12 rounded-2xl border-2 border-slate-200 px-4 font-semibold outline-none transition focus:border-emerald-500"
               />
-
               <input
                 value={recipeServings}
                 onChange={(event) => setRecipeServings(event.target.value)}
@@ -416,7 +430,6 @@ export function Foods({
                       </option>
                     ))}
                   </select>
-
                   <input
                     value={ingredient.amountGrams}
                     onChange={(event) =>
@@ -428,7 +441,6 @@ export function Foods({
                     inputMode="decimal"
                     className="h-11 rounded-2xl border-2 border-slate-200 px-2 text-center text-sm font-black outline-none"
                   />
-
                   <button
                     type="button"
                     onClick={() => removeIngredient(index)}
@@ -464,9 +476,9 @@ export function Foods({
         </Card>
       ) : null}
 
-      <div className="mt-4 flex flex-col gap-3 pb-10">
+      <div className="mt-4 flex flex-col gap-3 pb-10 food-results-enter">
         {filteredFoods.map((food) => (
-          <Card key={food.id} className="p-4">
+          <Card key={food.id} className="p-4 card-pop">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-2xl">
                 {food.emoji ?? "🍽️"}
@@ -476,7 +488,6 @@ export function Foods({
                 <p className="truncate text-lg font-black text-slate-950">
                   {food.name}
                 </p>
-
                 <p className="text-sm font-semibold text-slate-500">
                   {food.source === "recipe" ? "Recipe · " : ""}
                   {food.fiberPer100g.toFixed(1)}g fiber per 100g
@@ -486,11 +497,7 @@ export function Foods({
               <button
                 type="button"
                 onClick={() => onToggleFoodFavorite(food.id)}
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                  food.isFavorite
-                    ? "bg-yellow-100 text-yellow-500"
-                    : "bg-slate-100 text-slate-400"
-                }`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${food.isFavorite ? "bg-yellow-100 text-yellow-500" : "bg-slate-100 text-slate-400"}`}
               >
                 <Star
                   size={19}
@@ -503,14 +510,9 @@ export function Foods({
                   type="button"
                   onClick={() => {
                     const ok = confirm(`Delete ${food.name}?`);
-
                     if (!ok) return;
-
-                    if (food.recipeId) {
-                      onDeleteRecipe(food.recipeId);
-                    } else {
-                      onDeleteFood(food.id);
-                    }
+                    if (food.recipeId) onDeleteRecipe(food.recipeId);
+                    else onDeleteFood(food.id);
                   }}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500 transition active:scale-90"
                   title="Delete food"

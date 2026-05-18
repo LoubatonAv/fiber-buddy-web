@@ -55,7 +55,17 @@ export function loadFoods(): Food[] {
     return normalized;
   }
 
-  return normalizeFoods(foods);
+  const normalizedExisting = normalizeFoods(foods);
+  const existingIds = new Set(normalizedExisting.map((food) => food.id));
+  const missingDefaults = normalizeFoods(defaultFoods).filter(
+    (food) => !existingIds.has(food.id),
+  );
+
+  if (missingDefaults.length === 0) return normalizedExisting;
+
+  const merged = [...normalizedExisting, ...missingDefaults];
+  saveFoods(merged);
+  return merged;
 }
 
 export function saveFoods(foods: Food[]) {

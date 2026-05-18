@@ -123,7 +123,7 @@ export function MealDetails({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#f7f8f8]">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-8">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-8 no-scrollbar">
         <header className="mb-6 flex items-center gap-4">
           <button
             onClick={onBack}

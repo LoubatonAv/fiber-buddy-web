@@ -4,6 +4,7 @@ import { Button } from "./Button";
 import { Card } from "./Card";
 import { calculateFiber, formatFiber } from "../lib/fiber";
 import type { Food, FoodEntry, MealCategory, UserProfile } from "../types";
+import { OwlMessenger } from "./OwlMessenger";
 
 type Props = {
   profile: UserProfile;
@@ -168,6 +169,7 @@ export function Diary({
             Week 7
           </p>
         </div>
+        <OwlMessenger streak={streak} totalFiber={totalFiber} goal={goal} />
 
         <div className="flex items-center gap-3 text-[14px] font-black">
           <span title="Foods in database">💎 {foods.length}</span>
@@ -194,7 +196,7 @@ export function Diary({
           onClick={() => setIsModalOpen(true)}
           className="block w-full text-left"
         >
-          <Card className="border-[2px] border-slate-200 p-4">
+          <Card className="soft-rise border-[2px] border-slate-200 p-4">
             <div className="flex items-center justify-between gap-2">
               <div className="w-16 text-center">
                 <p className="text-[19px] font-black text-slate-950">
@@ -221,35 +223,6 @@ export function Diary({
                 <p className="text-[13px] font-semibold text-slate-500">Goal</p>
               </div>
             </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-4">
-              {[
-                { label: "Goal", value: goal, fill: 100 },
-                { label: "Eaten", value: totalFiber, fill: percent },
-                { label: "Left", value: remaining, fill: 0 },
-              ].map((item) => (
-                <div key={item.label}>
-                  <p className="mb-2 text-center text-[14px] font-semibold text-slate-600">
-                    {item.label}
-                  </p>
-
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                    {item.fill > 0 ? (
-                      <div
-                        className="h-full rounded-full bg-emerald-500"
-                        style={{
-                          width: `${Math.min(100, Math.max(0, item.fill))}%`,
-                        }}
-                      />
-                    ) : null}
-                  </div>
-
-                  <p className="mt-2 text-center text-[13px] font-black text-slate-950">
-                    {formatFiber(item.value)}
-                  </p>
-                </div>
-              ))}
-            </div>
           </Card>
         </button>
       </section>
@@ -265,7 +238,7 @@ export function Diary({
           </button>
         </div>
 
-        <Card className="overflow-hidden border-[2px] border-slate-200">
+        <Card className="soft-rise overflow-hidden border-[2px] border-slate-200">
           {mealOrder.map((meal, index) => {
             const entries = entriesByMeal[meal];
             const mealFiber = getMealFiber(entries);
