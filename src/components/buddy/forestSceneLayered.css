@@ -1,0 +1,184 @@
+.forest-layered-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 72% 18%,
+      rgba(255, 231, 150, 0.18),
+      transparent 18%
+    ),
+    linear-gradient(180deg, #102f35 0%, #163f37 48%, #264c32 100%);
+}
+
+.forest-sky-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 24% 20%,
+      rgba(163, 216, 177, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 80% 8%,
+      rgba(255, 223, 140, 0.18),
+      transparent 22%
+    );
+}
+
+.forest-moon {
+  position: absolute;
+  right: 42px;
+  top: 42px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #f7df91;
+  box-shadow: 0 0 26px rgba(247, 223, 145, 0.38);
+}
+
+.forest-hill {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  border-radius: 50% 50% 0 0;
+}
+
+.forest-hill-back {
+  bottom: 54px;
+  height: 130px;
+  background: rgba(48, 94, 58, 0.55);
+}
+
+.forest-hill-front {
+  bottom: 0;
+  height: 120px;
+  background: #2d5a37;
+}
+
+.forest-tree {
+  position: absolute;
+  bottom: 72px;
+  width: 72px;
+  height: 220px;
+}
+
+.forest-tree::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 22px;
+  height: 180px;
+  border-radius: 999px;
+  background: #4a2f1d;
+  transform: translateX(-50%);
+}
+
+.forest-tree::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 120px;
+  height: 190px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 40% 28%, #4f8a4d, transparent 34%),
+    radial-gradient(circle at 66% 44%, #39713f, transparent 38%),
+    radial-gradient(circle at 48% 62%, #2e6539, transparent 42%);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.16));
+}
+
+.forest-tree-left {
+  left: -26px;
+}
+
+.forest-tree-right {
+  right: -30px;
+  transform: scaleX(-1);
+}
+
+.forest-branch-anchor {
+  position: absolute;
+  z-index: 3;
+  width: 118px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #5b351d, #8b5a31, #4a2c18);
+  box-shadow:
+    0 8px 16px rgba(14, 9, 4, 0.25),
+    inset 0 2px 3px rgba(255, 224, 160, 0.22);
+}
+
+.forest-branch-left {
+  left: 34px;
+  top: 242px;
+  transform: rotate(-6deg);
+}
+
+.forest-branch-right {
+  right: 34px;
+  top: 258px;
+  transform: rotate(6deg);
+}
+
+.forest-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -12px;
+  height: 82px;
+  background:
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(179, 209, 124, 0.24),
+      transparent 16%
+    ),
+    linear-gradient(180deg, #386b3c, #244d2d);
+}
+
+.forest-firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #ffe98a;
+  box-shadow:
+    0 0 10px #ffe98a,
+    0 0 24px rgba(255, 233, 138, 0.72);
+  animation: layeredFirefly 4s ease-in-out infinite;
+  opacity: 0;
+}
+
+.firefly-one {
+  left: 24%;
+  top: 32%;
+}
+
+.firefly-two {
+  right: 28%;
+  top: 42%;
+  animation-delay: 1.1s;
+}
+
+.firefly-three {
+  left: 52%;
+  bottom: 30%;
+  animation-delay: 2s;
+}
+
+@keyframes layeredFirefly {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.7);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-12px) scale(1);
+  }
+}

@@ -1,0 +1,214 @@
+.owl-buddy {
+  position: absolute;
+  z-index: 5;
+
+  width: 88px;
+  height: 88px;
+
+  left: 28%;
+  top: 48%;
+
+  transform: translate(-50%, -100%) scale(var(--ollie-scale, 0.48));
+  transform-origin: center bottom;
+
+  transition:
+    left 1500ms cubic-bezier(0.22, 1, 0.36, 1),
+    top 1500ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  pointer-events: none;
+  user-select: none;
+  will-change: left, top, transform;
+}
+
+.owl-png {
+  width: 100%;
+  height: 100%;
+}
+
+.owl-facing-left .owl-png {
+  transform: scaleX(-1);
+}
+
+.owl-facing-right .owl-png {
+  transform: scaleX(1);
+}
+
+.owl-hello {
+  animation: owlHelloPop 1200ms ease-out;
+}
+
+.owl-flying {
+  animation: owlFlightArc 1500ms ease-in-out;
+}
+
+.owl-sleeping {
+  animation: owlSleepBob 4200ms ease-in-out infinite;
+}
+
+.owl-happy {
+  animation: owlHappyBounce 1100ms ease-in-out infinite;
+}
+
+.owl-idle-normal.owl-idle {
+  animation: owlIdleBob 3200ms ease-in-out infinite;
+}
+
+.owl-idle-normal {
+  animation: owlIdleBob 3200ms ease-in-out infinite;
+}
+
+.owl-idle-hop {
+  animation: owlTinyHop 1200ms ease-in-out;
+}
+
+.owl-idle-settle {
+  animation: owlSettle 2200ms ease-in-out;
+}
+
+.owl-idle-curious {
+  animation: owlCurious 1800ms ease-in-out;
+}
+
+.owl-idle-landing {
+  animation: owlLanding 900ms ease-out;
+}
+
+@keyframes owlHelloPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.2);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -100%)
+      scale(calc(var(--ollie-scale, 0.48) * 1.12));
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(var(--ollie-scale, 0.48));
+  }
+}
+
+@keyframes owlFlightArc {
+  0% {
+    margin-top: 0;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
+  }
+
+  35% {
+    margin-top: -46px;
+    filter: drop-shadow(0 18px 14px rgba(0, 0, 0, 0.18));
+  }
+
+  70% {
+    margin-top: -24px;
+  }
+
+  100% {
+    margin-top: 0;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
+  }
+}
+
+@keyframes owlIdleBob {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  50% {
+    margin-top: -4px;
+  }
+}
+
+@keyframes owlTinyHop {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  40% {
+    margin-top: -14px;
+  }
+
+  70% {
+    margin-top: 2px;
+  }
+}
+
+@keyframes owlSettle {
+  0%,
+  100% {
+    transform: translate(-50%, -100%) scale(var(--ollie-scale, 0.48));
+  }
+
+  45% {
+    transform: translate(-50%, -100%)
+      scale(calc(var(--ollie-scale, 0.48) * 0.94));
+  }
+
+  70% {
+    transform: translate(-50%, -100%)
+      scale(calc(var(--ollie-scale, 0.48) * 1.03));
+  }
+}
+
+@keyframes owlCurious {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+
+  30% {
+    rotate: -5deg;
+  }
+
+  65% {
+    rotate: 5deg;
+  }
+}
+
+@keyframes owlLanding {
+  0% {
+    margin-top: -22px;
+  }
+
+  55% {
+    margin-top: 5px;
+  }
+
+  100% {
+    margin-top: 0;
+  }
+}
+
+@keyframes owlSleepBob {
+  0%,
+  100% {
+    margin-top: 0;
+    opacity: 0.96;
+  }
+
+  50% {
+    margin-top: 3px;
+    opacity: 1;
+  }
+}
+
+@keyframes owlHappyBounce {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  35% {
+    margin-top: -10px;
+  }
+
+  65% {
+    margin-top: 2px;
+  }
+}

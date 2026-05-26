@@ -8,6 +8,7 @@ import type {
   MealCategory,
   UserProfile,
 } from "../types";
+import { MascotCallout } from "./MascotCallout";
 
 type Props = {
   foods: Food[];
@@ -64,8 +65,14 @@ export function Ideas({
   const weeklyTotal = lastSevenDays.reduce((sum, day) => sum + day.fiber, 0);
   const weeklyAverage = weeklyTotal / 7;
   const bestDay = [...lastSevenDays].sort((a, b) => b.fiber - a.fiber)[0];
-  const todayPercent = Math.min(100, (totalFiber / profile.dailyFiberGoal) * 100);
-  const averagePercent = Math.min(100, (weeklyAverage / profile.dailyFiberGoal) * 100);
+  const todayPercent = Math.min(
+    100,
+    (totalFiber / profile.dailyFiberGoal) * 100,
+  );
+  const averagePercent = Math.min(
+    100,
+    (weeklyAverage / profile.dailyFiberGoal) * 100,
+  );
 
   const usedCounts = new Map<string, number>();
   for (const entry of entries) {
@@ -73,7 +80,10 @@ export function Ideas({
   }
 
   const quickFoods = foods
-    .filter((food) => food.isFavorite || food.source === "recipe" || usedCounts.has(food.id))
+    .filter(
+      (food) =>
+        food.isFavorite || food.source === "recipe" || usedCounts.has(food.id),
+    )
     .sort((a, b) => {
       if (a.source === "recipe" && b.source !== "recipe") return -1;
       if (a.source !== "recipe" && b.source === "recipe") return 1;
@@ -83,7 +93,9 @@ export function Ideas({
     })
     .slice(0, 8);
 
-  const recipeCards = foods.filter((food) => food.source === "recipe").slice(0, 6);
+  const recipeCards = foods
+    .filter((food) => food.source === "recipe")
+    .slice(0, 6);
 
   return (
     <>
@@ -95,7 +107,11 @@ export function Ideas({
           Weekly averages, streaks and quick-add meals.
         </p>
       </header>
-
+      <MascotCallout
+        title="Owl suggestion"
+        body="Need a tiny push? The owl can bring a fiber-friendly idea."
+        kind="streak"
+      />
       <section className="mb-5 grid grid-cols-2 gap-3">
         <Card className="border-2 border-slate-200 p-4 card-pop">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -124,7 +140,9 @@ export function Ideas({
 
       <section className="mb-6">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-[24px] font-black text-slate-950">Weekly fiber</h2>
+          <h2 className="text-[24px] font-black text-slate-950">
+            Weekly fiber
+          </h2>
           <p className="text-sm font-black text-emerald-700">
             avg {Math.round(averagePercent)}%
           </p>
@@ -148,7 +166,10 @@ export function Ideas({
               });
 
               return (
-                <div key={day.key} className="flex flex-1 flex-col items-center gap-2">
+                <div
+                  key={day.key}
+                  className="flex flex-1 flex-col items-center gap-2"
+                >
                   <div className="flex h-20 w-full items-end rounded-full bg-slate-100 px-1">
                     <div
                       className={`w-full rounded-full transition-all duration-500 ${
@@ -223,7 +244,10 @@ export function Ideas({
 
           <div className="flex flex-col gap-3">
             {recipeCards.map((food) => (
-              <Card key={food.id} className="border-2 border-slate-200 p-4 card-pop">
+              <Card
+                key={food.id}
+                className="border-2 border-slate-200 p-4 card-pop"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-2xl">
                     {food.emoji ?? "🍲"}
@@ -233,7 +257,14 @@ export function Ideas({
                       {food.name}
                     </p>
                     <p className="text-sm font-semibold text-slate-500">
-                      ~{formatFiber(calculateFiber(food.servingGrams ?? 100, food.fiberPer100g))} per serving
+                      ~
+                      {formatFiber(
+                        calculateFiber(
+                          food.servingGrams ?? 100,
+                          food.fiberPer100g,
+                        ),
+                      )}{" "}
+                      per serving
                     </p>
                   </div>
                   {onQuickAdd ? (
@@ -261,7 +292,9 @@ export function Ideas({
 
         {quickFoods.length === 0 ? (
           <Card className="border-2 border-slate-200 p-5">
-            <p className="text-lg font-black text-slate-950">No quick adds yet</p>
+            <p className="text-lg font-black text-slate-950">
+              No quick adds yet
+            </p>
             <p className="mt-1 text-sm font-semibold text-slate-500">
               Favorite foods or create recipes to see them here.
             </p>
@@ -273,7 +306,10 @@ export function Ideas({
               const fiber = calculateFiber(amount, food.fiberPer100g);
 
               return (
-                <Card key={food.id} className="border-2 border-slate-200 p-4 card-pop">
+                <Card
+                  key={food.id}
+                  className="border-2 border-slate-200 p-4 card-pop"
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-2xl">
                       {food.emoji ?? "🍽️"}

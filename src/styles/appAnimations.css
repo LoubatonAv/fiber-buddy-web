@@ -1,0 +1,425 @@
+/* =========================================================
+   Fiber Tracker - soft animation pack
+   Add this file to src/styles/appAnimations.css
+   Then import it once from src/index.css:
+   @import "./styles/appAnimations.css";
+   ========================================================= */
+
+:root {
+  --fiber-bg: #f7f8f8;
+  --fiber-ink: #07111f;
+  --fiber-muted: #64748b;
+  --fiber-green: #18b88f;
+  --fiber-soft-green: #e9fff7;
+  --fiber-card: #ffffff;
+  --fiber-border: #dfe7ee;
+  --fiber-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* Hide scrollbars but keep scrolling */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tap feel: very subtle, not bouncy */
+button {
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+button:active {
+  transform: scale(0.985);
+}
+
+input,
+textarea,
+select {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(24, 184, 143, 0.12);
+}
+
+@keyframes fiber-soft-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.soft-screen,
+.soft-card,
+.soft-rise {
+  animation: fiber-soft-in 260ms ease-out both;
+}
+
+@keyframes bottom-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bottom-sheet-soft {
+  animation: bottom-sheet-in 240ms ease-out both;
+}
+
+@keyframes plus-spin-once {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  45% {
+    transform: rotate(180deg) scale(1.05);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.plus-spin-once {
+  animation: plus-spin-once 360ms ease-out;
+}
+
+@keyframes counter-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.075);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.counter-pop {
+  animation: counter-pop 300ms ease-out;
+}
+
+@keyframes fairy-dust {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  18% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0.14);
+  }
+}
+
+.fairy-dust {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.fairy-dust span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 5px;
+  width: 5px;
+  border-radius: 9999px;
+  background: #18b88f;
+  animation: fairy-dust 540ms ease-out forwards;
+}
+
+.fairy-dust span:nth-child(1) { --x: -18px; --y: -16px; }
+.fairy-dust span:nth-child(2) { --x: 18px; --y: -20px; background: #fbbf24; animation-delay: 35ms; }
+.fairy-dust span:nth-child(3) { --x: -16px; --y: 18px; background: #60a5fa; animation-delay: 60ms; }
+.fairy-dust span:nth-child(4) { --x: 22px; --y: 15px; background: #34d399; animation-delay: 85ms; }
+.fairy-dust span:nth-child(5) { --x: 0px; --y: -28px; background: #a78bfa; animation-delay: 115ms; }
+
+/* =========================================================
+   Flying owl delivery
+   ========================================================= */
+
+.owl-delivery-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.owl-flight-wrap {
+  position: absolute;
+  left: -110px;
+  top: 42px;
+  width: 92px;
+  height: 92px;
+  animation: owl-flight-path 5.45s cubic-bezier(0.22, 0.82, 0.26, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes owl-flight-path {
+  0% {
+    opacity: 0;
+    transform: translate(-40px, 38px) rotate(-8deg) scale(0.84);
+  }
+
+  14% {
+    opacity: 1;
+    transform: translate(108px, 8px) rotate(4deg) scale(0.96);
+  }
+
+  31% {
+    transform: translate(196px, 46px) rotate(-2deg) scale(1);
+  }
+
+  47% {
+    transform: translate(162px, 126px) rotate(1deg) scale(1.02);
+  }
+
+  66% {
+    transform: translate(162px, 126px) rotate(0deg) scale(1.02);
+  }
+
+  83% {
+    opacity: 1;
+    transform: translate(292px, 54px) rotate(6deg) scale(0.95);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(520px, -22px) rotate(10deg) scale(0.78);
+  }
+}
+
+.css-owl {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  transform-origin: center;
+  animation: owl-gentle-bob 860ms ease-in-out infinite;
+}
+
+@keyframes owl-gentle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.owl-body {
+  position: absolute;
+  left: 18px;
+  top: 14px;
+  width: 50px;
+  height: 58px;
+  border-radius: 52% 52% 46% 46%;
+  background: linear-gradient(145deg, #a97955, #7f533b);
+  box-shadow: inset -7px -8px 0 rgba(46, 30, 22, 0.16), 0 8px 20px rgba(15, 23, 42, 0.18);
+}
+
+.owl-ear {
+  position: absolute;
+  top: -5px;
+  width: 15px;
+  height: 16px;
+  background: #7f533b;
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+.owl-ear-left { left: 6px; transform: rotate(-18deg); }
+.owl-ear-right { right: 6px; transform: rotate(18deg); }
+
+.owl-face {
+  position: absolute;
+  left: 7px;
+  top: 10px;
+  width: 36px;
+  height: 28px;
+  border-radius: 999px;
+  background: #fff4d8;
+}
+
+.owl-eye {
+  position: absolute;
+  top: 7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 2px rgba(15, 23, 42, 0.1);
+}
+
+.owl-eye-left { left: 6px; }
+.owl-eye-right { right: 6px; }
+.owl-eye span {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #101827;
+}
+
+.owl-beak {
+  position: absolute;
+  left: 15px;
+  top: 17px;
+  width: 8px;
+  height: 8px;
+  background: #f9a826;
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+.owl-wing {
+  position: absolute;
+  top: 28px;
+  width: 28px;
+  height: 38px;
+  border-radius: 80% 40% 70% 50%;
+  background: linear-gradient(145deg, #8c6045, #694530);
+  transform-origin: top center;
+  z-index: 0;
+  animation: owl-wing-flap 430ms ease-in-out infinite;
+}
+
+.owl-wing-left {
+  left: 5px;
+  transform: rotate(22deg);
+}
+
+.owl-wing-right {
+  right: 1px;
+  transform: rotate(-22deg) scaleX(-1);
+}
+
+@keyframes owl-wing-flap {
+  0%, 100% { transform: rotate(24deg); }
+  50% { transform: rotate(-8deg); }
+}
+
+.owl-wing-right {
+  animation-name: owl-wing-flap-right;
+}
+
+@keyframes owl-wing-flap-right {
+  0%, 100% { transform: rotate(-24deg) scaleX(-1); }
+  50% { transform: rotate(8deg) scaleX(-1); }
+}
+
+.owl-letter {
+  position: absolute;
+  left: 52px;
+  top: 58px;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 20px;
+  border-radius: 5px;
+  background: #fffdf6;
+  color: #b45309;
+  font-size: 15px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+  animation: letter-drop 5.45s ease-out forwards;
+}
+
+@keyframes letter-drop {
+  0%, 46% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(5deg) scale(1);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate(-14px, 36px) rotate(-8deg) scale(1.08);
+  }
+
+  76%, 100% {
+    opacity: 0;
+    transform: translate(-14px, 44px) rotate(-4deg) scale(0.92);
+  }
+}
+
+.owl-message-card {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 230px;
+  border: 1px solid #fde68a;
+  border-radius: 22px;
+  background: #fff9e8;
+  padding: 14px 16px;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  animation: owl-message-in-out 5.45s ease-out forwards;
+}
+
+@keyframes owl-message-in-out {
+  0%, 45% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  55%, 82% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+  }
+}
+
+.owl-message-title {
+  margin: 0;
+  color: #07111f;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.owl-message-body {
+  margin: 5px 0 0;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}

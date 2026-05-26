@@ -3,6 +3,7 @@ import { Button } from "./Button";
 import { Card } from "./Card";
 import { saveProfile } from "../lib/storage";
 import type { UserProfile } from "../types";
+import { MascotCallout } from "./MascotCallout";
 
 type Props = {
   profile: UserProfile;
@@ -46,8 +47,14 @@ export function Profile({
         </p>
       </header>
 
-      <Card className="p-5">
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-4xl">
+      <MascotCallout
+        title="Call your owl"
+        body="Preview the letter delivery animation whenever you want."
+        kind="test"
+      />
+
+      <Card className="mt-5 p-5">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--forest-primary-soft)] text-4xl">
           👤
         </div>
 
@@ -76,7 +83,7 @@ export function Profile({
         </div>
       </Card>
 
-      <Card className="p-5">
+      <Card className="mt-5 p-5">
         <h2 className="mb-4 text-xl font-black text-slate-950">About you</h2>
 
         <div className="grid grid-cols-2 gap-4 text-sm">

@@ -18,7 +18,7 @@ export type FiberGoalMode = "calculated" | "manual";
 
 export type MealCategory = "breakfast" | "lunch" | "dinner" | "snacks";
 
-export type MainTab = "diary" | "foods" | "ideas" | "profile";
+export type MainTab = "diary" | "buddy" | "profile";
 
 export type AddMode = "recent" | "frequent" | "favorites" | "recipes" | "all" | "combo";
 

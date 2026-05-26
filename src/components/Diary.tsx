@@ -4,7 +4,6 @@ import { Button } from "./Button";
 import { Card } from "./Card";
 import { calculateFiber, formatFiber } from "../lib/fiber";
 import type { Food, FoodEntry, MealCategory, UserProfile } from "../types";
-import { OwlMessenger } from "./OwlMessenger";
 
 type Props = {
   profile: UserProfile;
@@ -92,12 +91,10 @@ export function Diary({
 }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editDrafts, setEditDrafts] = useState<Record<string, string>>({});
-
   const goal = profile.dailyFiberGoal;
   const remaining = Math.max(0, goal - totalFiber);
   const percent =
     goal > 0 ? Math.min(100, Math.round((totalFiber / goal) * 100)) : 0;
-
   const entriesByMeal = useMemo(() => {
     const groups: Record<MealCategory, FoodEntry[]> = {
       breakfast: [],
@@ -156,7 +153,6 @@ export function Diary({
       return next;
     });
   }
-
   return (
     <>
       <header className="flex items-center justify-between">
@@ -169,7 +165,6 @@ export function Diary({
             Week 7
           </p>
         </div>
-        <OwlMessenger streak={streak} totalFiber={totalFiber} goal={goal} />
 
         <div className="flex items-center gap-3 text-[14px] font-black">
           <span title="Foods in database">💎 {foods.length}</span>

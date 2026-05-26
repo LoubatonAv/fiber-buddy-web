@@ -1,0 +1,84 @@
+.ollie-png-buddy {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  transform-origin: center bottom;
+  user-select: none;
+  pointer-events: none;
+}
+
+.ollie-full-body,
+.ollie-wing {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/*
+  Important:
+  Wings are ABOVE the body for now so we can actually see them.
+  Later, if they cover the body too much, we can tune the PNG/canvas.
+*/
+.ollie-wing {
+  z-index: 4;
+  transform-origin: center center;
+}
+
+.ollie-full-body {
+  z-index: 3;
+}
+
+.ollie-wing-left {
+  transform-origin: 58% 48%;
+}
+
+.ollie-wing-right {
+  transform-origin: 42% 48%;
+}
+
+.ollie-is-idle .ollie-wing-left,
+.ollie-is-idle .ollie-wing-right {
+  transform: translateY(0) rotate(0deg) scale(var(--wing-scale, 0.78));
+}
+
+.ollie-png-buddy[data-wing-frame="relaxed"] .ollie-wing-left {
+  transform: translateX(-29px) translateY(25px) scale(var(--wing-scale, 0.78));
+}
+
+.ollie-png-buddy[data-wing-frame="relaxed"] .ollie-wing-right {
+  transform: translateX(29px) translateY(25px) scale(var(--wing-scale, 0.08));
+}
+
+.ollie-png-buddy[data-wing-frame="up"] .ollie-wing-left {
+  transform: translateX(-4px) translateY(-5px) rotate(-14deg)
+    scale(var(--wing-scale, 0.78));
+}
+
+.ollie-png-buddy[data-wing-frame="up"] .ollie-wing-right {
+  transform: translateX(4px) translateY(-5px) rotate(14deg)
+    scale(var(--wing-scale, 0.78));
+}
+
+.ollie-png-buddy[data-wing-frame="mid"] .ollie-wing-left {
+  transform: translateX(-3px) translateY(0) rotate(-3deg)
+    scale(var(--wing-scale, 0.78));
+}
+
+.ollie-png-buddy[data-wing-frame="mid"] .ollie-wing-right {
+  transform: translateX(3px) translateY(0) rotate(3deg)
+    scale(var(--wing-scale, 0.78));
+}
+
+.owl-buddy,
+.owl-buddy * {
+  animation: none !important;
+  transition: none !important;
+}

@@ -35,6 +35,7 @@ type Props = {
   ) => FoodEntry;
   onDeleteEntry: (id: string) => void;
   onUpdateEntry: (id: string, amountGrams: number) => void;
+  onToggleFavorite?: (foodId: string) => void;
   onDone: () => void;
 };
 
@@ -60,6 +61,7 @@ export function AddFoodPanel({
   onAdd,
   onDeleteEntry,
   onUpdateEntry,
+  onToggleFavorite,
   onDone,
 }: Props) {
   const [mode, setMode] = useState<AddMode>("recent");

@@ -1,31 +1,28 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AddFoodPanel } from "./AddFoodPanel";
 import { BottomNav } from "./BottomNav";
 import { Diary } from "./Diary";
-import { Foods } from "./Foods";
-import { Ideas } from "./Ideas";
 import { MealDetails } from "./MealDetails";
 import { Profile } from "./Profile";
+import { Buddy } from "./Buddy";
+import { OwlDelivery, type OwlDeliveryHandle } from "./OwlDelivery";
 import { getTodayKey } from "../lib/fiber";
-import { FoodsHub } from "./FoodsHub";
 import {
   loadEntries,
   loadFoods,
   loadLastAmounts,
-  loadRecipes,
   saveEntries,
   saveFoods,
   saveLastAmounts,
   saveProfile,
-  saveRecipes,
 } from "../lib/storage";
+import { applyBuddyEvent, getTodayKey as getBuddyTodayKey, loadBuddyState, saveBuddyState, type BuddyEvent, type BuddyState } from "../lib/buddy";
 import type {
   Food,
   FoodEntry,
   LastAmountMap,
   MainTab,
   MealCategory,
-  Recipe,
   UserProfile,
 } from "../types";
 
@@ -58,11 +55,12 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
   const [mealDetails, setMealDetails] = useState<MealCategory | null>(null);
 
   const [foods, setFoods] = useState<Food[]>(() => loadFoods());
-  const [recipes, setRecipes] = useState<Recipe[]>(() => loadRecipes());
   const [entries, setEntries] = useState<FoodEntry[]>(() => loadEntries());
   const [lastAmounts, setLastAmounts] = useState<LastAmountMap>(() =>
     loadLastAmounts(),
   );
+  const [buddy, setBuddy] = useState<BuddyState>(() => loadBuddyState());
+  const owlRef = useRef<OwlDeliveryHandle>(null);
 
   const today = getTodayKey();
 
@@ -87,10 +85,6 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
     saveFoods(nextFoods);
   }
 
-  function persistRecipes(nextRecipes: Recipe[]) {
-    setRecipes(nextRecipes);
-    saveRecipes(nextRecipes);
-  }
 
   function persistEntries(nextEntries: FoodEntry[]) {
     setEntries(nextEntries);
@@ -102,26 +96,34 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
     saveLastAmounts(next);
   }
 
+  function persistBuddy(nextBuddy: BuddyState) {
+    setBuddy(nextBuddy);
+    saveBuddyState(nextBuddy);
+  }
+
+  function awardBuddyEvent(event: BuddyEvent) {
+    // Read the latest saved buddy state so sequential rewards in the same tick
+    // do not overwrite each other.
+    const latestBuddy = loadBuddyState();
+    const result = applyBuddyEvent(latestBuddy, event, getBuddyTodayKey());
+    persistBuddy(result.state);
+    return {
+      awarded: result.awarded,
+      message: result.message,
+    };
+  }
+
+  function renameOwl(name: string) {
+    persistBuddy({ ...buddy, owlName: name });
+  }
+
+
   function addFood(food: Food) {
     persistFoods([food, ...foods]);
+    awardBuddyEvent("newFood");
   }
 
-  function addRecipe(recipe: Recipe, recipeFood: Food) {
-    persistRecipes([recipe, ...recipes]);
-    persistFoods([recipeFood, ...foods]);
-  }
 
-  function deleteRecipe(recipeId: string) {
-    const deletedFoodIds = new Set(
-      foods.filter((food) => food.recipeId === recipeId).map((food) => food.id),
-    );
-
-    persistRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
-    persistFoods(foods.filter((food) => food.recipeId !== recipeId));
-    persistEntries(
-      entries.filter((entry) => !deletedFoodIds.has(entry.foodId)),
-    );
-  }
 
   function toggleFoodFavorite(foodId: string) {
     persistFoods(
@@ -132,13 +134,6 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
   }
 
   function deleteFood(foodId: string) {
-    const foodToDelete = foods.find((food) => food.id === foodId);
-
-    if (foodToDelete?.recipeId) {
-      deleteRecipe(foodToDelete.recipeId);
-      return;
-    }
-
     persistFoods(foods.filter((food) => food.id !== foodId));
     persistEntries(entries.filter((entry) => entry.foodId !== foodId));
   }
@@ -165,12 +160,26 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
       mealCategory,
     };
 
+    const addedFiber = (amountGrams / 100) * food.fiberPer100g;
+    const reachedGoalNow =
+      totalFiber < profile.dailyFiberGoal &&
+      totalFiber + addedFiber >= profile.dailyFiberGoal;
+
     persistEntries([nextEntry, ...entries]);
 
     persistLastAmounts({
       ...lastAmounts,
       [food.id]: amountGrams,
     });
+
+    awardBuddyEvent("foodLog");
+
+    if (reachedGoalNow) {
+      const result = awardBuddyEvent("goal");
+      if (result.awarded) {
+        window.setTimeout(() => window.fiberOwl?.deliver("goal"), 350);
+      }
+    }
 
     return nextEntry;
   }
@@ -214,19 +223,74 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
     onProfileChange(nextProfile);
   }
 
+  useEffect(() => {
+    window.fiberOwl = {
+      deliver: (kind?: "test" | "streak" | "missed" | "goal") => {
+        owlRef.current?.deliver(kind ?? "test");
+      },
+    };
+
+    return () => {
+      delete window.fiberOwl;
+    };
+  }, []);
+
+  useEffect(() => {
+    awardBuddyEvent("open");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const seenKey = `fiber-owl-seen-${todayKey}`;
+    if (localStorage.getItem(seenKey)) return;
+
+    const random = Math.random();
+
+    if (streak > 0) {
+      if (streak % 7 === 0) {
+        localStorage.setItem(seenKey, "1");
+        owlRef.current?.deliver("streak");
+        return;
+      }
+
+      if (totalFiber >= profile.dailyFiberGoal && profile.dailyFiberGoal > 0) {
+        localStorage.setItem(seenKey, "1");
+        owlRef.current?.deliver("goal");
+        return;
+      }
+
+      if (random < 0.16) {
+        localStorage.setItem(seenKey, "1");
+        owlRef.current?.deliver("streak");
+      }
+    } else if (todayEntries.length === 0 && random < 0.12) {
+      localStorage.setItem(seenKey, "1");
+      owlRef.current?.deliver("missed");
+    }
+  }, [streak, totalFiber, profile.dailyFiberGoal, todayEntries.length]);
+
   if (isAdding) {
     return (
-      <AddFoodPanel
-        foods={foods}
-        entries={entries}
-        lastAmounts={lastAmounts}
-        selectedMeal={selectedMeal}
-        onAdd={addEntry}
-        onDeleteEntry={deleteEntry}
-        onUpdateEntry={updateEntry}
-        onToggleFavorite={toggleFoodFavorite}
-        onDone={() => setIsAdding(false)}
-      />
+      <>
+        <OwlDelivery
+          ref={owlRef}
+          streak={streak}
+          totalFiber={totalFiber}
+          goal={profile.dailyFiberGoal}
+        />
+        <AddFoodPanel
+          foods={foods}
+          entries={entries}
+          lastAmounts={lastAmounts}
+          selectedMeal={selectedMeal}
+          onAdd={addEntry}
+          onDeleteEntry={deleteEntry}
+          onUpdateEntry={updateEntry}
+          onToggleFavorite={toggleFoodFavorite}
+          onDone={() => setIsAdding(false)}
+        />
+      </>
     );
   }
 
@@ -236,21 +300,36 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
     );
 
     return (
-      <MealDetails
-        meal={mealDetails}
-        foods={foods}
-        entries={mealEntries}
-        dailyGoal={profile.dailyFiberGoal}
-        onBack={() => setMealDetails(null)}
-        onAddMore={() => openAdd(mealDetails)}
-        onDeleteEntry={deleteEntry}
-        onUpdateEntry={updateEntry}
-      />
+      <>
+        <OwlDelivery
+          ref={owlRef}
+          streak={streak}
+          totalFiber={totalFiber}
+          goal={profile.dailyFiberGoal}
+        />
+        <MealDetails
+          meal={mealDetails}
+          foods={foods}
+          entries={mealEntries}
+          dailyGoal={profile.dailyFiberGoal}
+          onBack={() => setMealDetails(null)}
+          onAddMore={() => openAdd(mealDetails)}
+          onDeleteEntry={deleteEntry}
+          onUpdateEntry={updateEntry}
+        />
+      </>
     );
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col app-soft-bg">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <OwlDelivery
+        ref={owlRef}
+        streak={streak}
+        totalFiber={totalFiber}
+        goal={profile.dailyFiberGoal}
+      />
+
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-8 page-enter">
         {tab === "diary" ? (
           <Diary
@@ -266,27 +345,15 @@ export function Home({ profile, onProfileChange, onRestartOnboarding }: Props) {
           />
         ) : null}
 
-        {tab === "foods" ? (
-          <FoodsHub
-            foods={foods}
-            recipes={recipes}
-            onAddFood={addFood}
-            onAddRecipe={addRecipe}
-            onDeleteFood={deleteFood}
-            onDeleteRecipe={deleteRecipe}
-            onToggleFoodFavorite={toggleFoodFavorite}
-            onImportFood={addEntry}
-          />
-        ) : null}
-
-        {tab === "ideas" ? (
-          <Ideas
-            foods={foods}
-            entries={entries}
-            profile={profile}
+        {tab === "buddy" ? (
+          <Buddy
+            buddy={buddy}
+            streak={streak}
             totalFiber={totalFiber}
-            lastAmounts={lastAmounts}
-            onQuickAdd={quickAddFood}
+            goal={profile.dailyFiberGoal}
+            todayFoodCount={todayEntries.length}
+            onBuddyEvent={awardBuddyEvent}
+            onRename={renameOwl}
           />
         ) : null}
 

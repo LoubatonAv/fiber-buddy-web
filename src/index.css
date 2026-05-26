@@ -19,6 +19,11 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 html,
@@ -39,6 +44,33 @@ textarea {
   font: inherit;
 }
 
+button,
+a,
+input,
+textarea,
+select {
+  transition:
+    transform 140ms ease,
+    opacity 160ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+button:active {
+  transform: scale(0.985);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+/* ------------------------------------ */
+/* App background */
+/* ------------------------------------ */
+
 .app-soft-bg {
   background:
     radial-gradient(
@@ -48,6 +80,10 @@ textarea {
     ),
     linear-gradient(180deg, #fbfdfc 0%, #f7f8f8 45%, #f3f5f5 100%);
 }
+
+/* ------------------------------------ */
+/* Small app animations */
+/* ------------------------------------ */
 
 .page-enter {
   animation: pageEnter 220ms ease-out both;
@@ -68,6 +104,108 @@ textarea {
 .plus-spin-once {
   animation: plusSpinOnce 380ms ease-out both;
 }
+
+.soft-rise {
+  animation: softRise 360ms ease-out both;
+}
+
+.tiny-pop {
+  animation: tinyPop 260ms ease-out both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes foodResultsEnter {
+  from {
+    opacity: 0.35;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.985) translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes counterPop {
+  0% {
+    transform: scale(0.92);
+  }
+
+  55% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes plusSpinOnce {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  55% {
+    transform: rotate(180deg) scale(1.08);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes softRise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tinyPop {
+  0% {
+    transform: scale(0.96);
+  }
+
+  55% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ------------------------------------ */
+/* Fairy dust for + button */
+/* ------------------------------------ */
 
 .fairy-dust {
   pointer-events: none;
@@ -92,93 +230,29 @@ textarea {
   --x: -18px;
   --y: -18px;
 }
+
 .fairy-dust span:nth-child(2) {
   --x: 18px;
   --y: -16px;
   animation-delay: 40ms;
 }
+
 .fairy-dust span:nth-child(3) {
   --x: -22px;
   --y: 12px;
   animation-delay: 80ms;
 }
+
 .fairy-dust span:nth-child(4) {
   --x: 20px;
   --y: 16px;
   animation-delay: 110ms;
 }
+
 .fairy-dust span:nth-child(5) {
   --x: 0px;
   --y: -24px;
   animation-delay: 140ms;
-}
-
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes foodResultsEnter {
-  from {
-    opacity: 0.35;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes cardPop {
-  from {
-    opacity: 0;
-    transform: scale(0.985) translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes counterPop {
-  0% {
-    transform: scale(0.92);
-  }
-  55% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes plusSpinOnce {
-  from {
-    transform: rotate(0deg) scale(1);
-  }
-  55% {
-    transform: rotate(180deg) scale(1.08);
-  }
-  to {
-    transform: rotate(360deg) scale(1);
-  }
 }
 
 @keyframes fairyDust {
@@ -186,12 +260,251 @@ textarea {
     opacity: 0.9;
     transform: translate(-50%, -50%) scale(0.8);
   }
+
   to {
     opacity: 0;
     transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
       scale(0.2);
   }
 }
+
+/* ------------------------------------ */
+/* Cute owl delivery v2 */
+/* ------------------------------------ */
+
+.owl-v2-overlay-fade {
+  animation: owlV2OverlayFade 240ms ease-out both;
+}
+
+@keyframes owlV2OverlayFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.owl-v2-flight-path {
+  animation: owlV2FlightPath 2.15s cubic-bezier(0.25, 0.85, 0.28, 1) forwards;
+}
+
+@keyframes owlV2FlightPath {
+  0% {
+    transform: translateX(-150px) translateY(18px) scale(0.86);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  42% {
+    transform: translateX(140px) translateY(-10px) scale(1);
+    opacity: 1;
+  }
+
+  65% {
+    transform: translateX(175px) translateY(-5px) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(540px) translateY(-28px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.owl-v2-flyer {
+  position: relative;
+  width: 145px;
+  height: 145px;
+}
+
+.owl-v2-soft-bob {
+  animation: owlV2SoftBob 1.25s ease-in-out infinite;
+}
+
+@keyframes owlV2SoftBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(1.2deg);
+  }
+}
+
+.owl-v2-wing-left {
+  transform-origin: 61px 81px;
+  animation: owlV2WingLeft 420ms ease-in-out infinite;
+}
+
+.owl-v2-wing-right {
+  transform-origin: 119px 81px;
+  animation: owlV2WingRight 420ms ease-in-out infinite;
+}
+
+@keyframes owlV2WingLeft {
+  0%,
+  100% {
+    transform: rotate(12deg);
+  }
+
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes owlV2WingRight {
+  0%,
+  100% {
+    transform: rotate(-12deg);
+  }
+
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+/* Letter while owl is carrying it */
+
+.owl-v2-carried-letter {
+  position: absolute;
+  right: 6px;
+  bottom: 30px;
+  width: 42px;
+  height: 30px;
+  border-radius: 7px;
+  border: 2px solid #e2bd67;
+  background: #fff7df;
+  box-shadow: 0 9px 18px rgba(0, 0, 0, 0.14);
+  animation: owlV2CarriedLetter 1.8s ease-in-out forwards;
+}
+
+.owl-v2-carried-letter span,
+.owl-v2-dropped-letter span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+
+.owl-v2-mini-flap {
+  position: absolute;
+  inset: 0;
+  background: #f3dc9c;
+  clip-path: polygon(0 0, 50% 58%, 100% 0);
+  opacity: 0.9;
+}
+
+@keyframes owlV2CarriedLetter {
+  0% {
+    transform: translateY(-2px) rotate(-7deg) scale(0.9);
+    opacity: 0;
+  }
+
+  20% {
+    transform: translateY(0) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+
+  72% {
+    transform: translateY(12px) rotate(6deg) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(34px) rotate(10deg) scale(0.94);
+    opacity: 0;
+  }
+}
+
+/* Letter after owl drops it */
+
+.owl-v2-dropped-letter {
+  width: 52px;
+  height: 38px;
+  margin-left: -26px;
+  border-radius: 8px;
+  border: 2px solid #e2bd67;
+  background: #fff7df;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+  animation: owlV2DroppedLetter 900ms ease-out both;
+}
+
+@keyframes owlV2DroppedLetter {
+  0% {
+    opacity: 0;
+    transform: translateY(-120px) rotate(-16deg) scale(0.8);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translateY(0) rotate(5deg) scale(1.04);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+/* Big letter modal */
+
+.owl-v2-letter-modal {
+  animation: owlV2LetterModal 520ms cubic-bezier(0.18, 0.95, 0.26, 1) both;
+  transform-origin: bottom center;
+}
+
+@keyframes owlV2LetterModal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.9) rotateX(14deg);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.02) rotateX(0deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+  }
+}
+
+.owl-v2-big-flap {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: -30px;
+  height: 58px;
+  border-radius: 16px 16px 0 0;
+  background: #f2d58f;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  transform-origin: bottom center;
+  animation: owlV2BigFlap 640ms ease-out 120ms both;
+  z-index: 0;
+}
+
+@keyframes owlV2BigFlap {
+  0% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotateX(-150deg);
+    opacity: 0.2;
+  }
+}
+/* ------------------------------------ */
+/* Reduced motion */
+/* ------------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -202,123 +515,4 @@ textarea {
     transition-duration: 1ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Hide scrollbars everywhere, but keep scrolling working */
-* {
-  scrollbar-width: none; /* Firefox */
-}
-
-*::-webkit-scrollbar {
-  display: none; /* Chrome, Edge, Safari */
-}
-
-/* General app polish */
-button {
-  transition:
-    transform 140ms ease,
-    opacity 140ms ease,
-    background-color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-input,
-textarea,
-select {
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 140ms ease;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
-}
-
-/* Soft page/card entrance */
-@keyframes soft-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.985);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.soft-rise {
-  animation: soft-rise 360ms ease-out both;
-}
-
-/* Small happy pop */
-@keyframes tiny-pop {
-  0% {
-    transform: scale(0.96);
-  }
-
-  55% {
-    transform: scale(1.025);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.tiny-pop {
-  animation: tiny-pop 260ms ease-out both;
-}
-
-/* Owl letter */
-@keyframes owl-float-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) rotate(-2deg) scale(0.96);
-  }
-
-  70% {
-    opacity: 1;
-    transform: translateY(2px) rotate(1deg) scale(1.01);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-}
-
-@keyframes owl-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-.owl-letter-enter {
-  animation: owl-float-in 520ms ease-out both;
-}
-
-.owl-bob {
-  animation: owl-bob 2.4s ease-in-out infinite;
-}
-
-/* Hide scrollbars but keep scrolling */
-* {
-  scrollbar-width: none;
-}
-
-*::-webkit-scrollbar {
-  display: none;
 }
