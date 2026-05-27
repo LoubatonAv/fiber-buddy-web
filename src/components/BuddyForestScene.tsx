@@ -8,6 +8,7 @@ type Activity =
   | "perching"
   | "flapping"
   | "flying"
+  | "hovering"
   | "foraging"
   | "petting"
   | "away"
@@ -16,7 +17,14 @@ type Activity =
 
 type OwlBuddyActivity = "idle" | "sleeping" | "happy" | "flying";
 
-type Spot = "left" | "right" | "center" | "ground";
+type Spot =
+  | "left"
+  | "right"
+  | "center"
+  | "ground"
+  | "airLeft"
+  | "airCenter"
+  | "airRight";
 
 type Props = {
   level: number;
@@ -33,12 +41,28 @@ const backgrounds = {
   night: "/backgrounds/forest-night.png",
 };
 
+const FLY_DURATION_MS = 3300;
+const FLAP_PREP_MS = 520;
+const HOVER_DURATION_MS = 2400;
+const FORAGE_DURATION_MS = 2600;
+const PET_DURATION_MS = 1300;
+const AWAY_DURATION_MS = 4600;
+const ACTION_INTERVAL_MS = 4800;
+
+const BRANCH_SPOTS: Spot[] = ["left", "right", "center"];
+const AIR_SPOTS: Spot[] = ["airLeft", "airCenter", "airRight"];
+
+function isBranchSpot(spot: Spot) {
+  return BRANCH_SPOTS.includes(spot);
+}
+
 function getOwlMessage(activity: Activity, owlName: string) {
   if (activity === "sleeping") return "Zzz...";
   if (activity === "petting") return "Petting 💛";
   if (activity === "foraging") return "Gathering berries 🫐";
   if (activity === "flapping") return "Getting ready...";
   if (activity === "flying") return "Flying!";
+  if (activity === "hovering") return "Floating...";
   if (activity === "returning") return "Coming back!";
   if (activity === "away") return `${owlName} is exploring...`;
 
@@ -51,6 +75,7 @@ function getOwlBuddyActivity(activity: Activity): OwlBuddyActivity {
   if (
     activity === "flapping" ||
     activity === "flying" ||
+    activity === "hovering" ||
     activity === "returning"
   ) {
     return "flying";
@@ -61,37 +86,18 @@ function getOwlBuddyActivity(activity: Activity): OwlBuddyActivity {
   return "idle";
 }
 
-function pickNextActivity(currentSpot: Spot): {
-  activity: Activity;
-  spot: Spot;
-} {
-  const roll = Math.random();
+function getNextBranchSpot(currentSpot: Spot): Spot {
+  if (currentSpot === "left") return "right";
+  if (currentSpot === "right") return "center";
+  return "left";
+}
 
-  if (roll < 0.18) {
-    return { activity: "flapping", spot: currentSpot };
-  }
+function getRandomAirSpot(): Spot {
+  return AIR_SPOTS[Math.floor(Math.random() * AIR_SPOTS.length)];
+}
 
-  if (roll < 0.5) {
-    return {
-      activity: "flying",
-      spot:
-        currentSpot === "left"
-          ? "right"
-          : currentSpot === "right"
-            ? "center"
-            : "left",
-    };
-  }
-
-  if (roll < 0.72) {
-    return { activity: "foraging", spot: "ground" };
-  }
-
-  if (roll < 0.86) {
-    return { activity: "away", spot: currentSpot };
-  }
-
-  return { activity: "perching", spot: currentSpot };
+function getRandomBranchSpot(): Spot {
+  return BRANCH_SPOTS[Math.floor(Math.random() * BRANCH_SPOTS.length)];
 }
 
 export function BuddyForestScene({
@@ -103,28 +109,33 @@ export function BuddyForestScene({
   const period = useForestPeriod();
 
   /**
-   * Later you can restore real night behavior:
+   * Later:
    * const isNight = period === "night";
    *
-   * For now this keeps Ollie active even at night while testing.
+   * For testing:
    */
   const isNight = false;
 
-  const [activity, setActivity] = useState<Activity>(
+  const [activity, setActivityState] = useState<Activity>(
     isNight ? "sleeping" : "perching",
   );
 
   const [spot, setSpotState] = useState<Spot>(isNight ? "right" : "left");
   const [berryKey, setBerryKey] = useState(0);
 
-  const spotRef = useRef<Spot>(spot);
   const activityRef = useRef<Activity>(activity);
+  const spotRef = useRef<Spot>(spot);
   const actionTimer = useRef<number | null>(null);
   const idleTimer = useRef<number | null>(null);
 
   const isAway = activity === "away";
   const sceneLevel = Math.min(5, Math.max(1, level));
   const owlBuddyActivity = getOwlBuddyActivity(activity);
+
+  function setActivity(nextActivity: Activity) {
+    activityRef.current = nextActivity;
+    setActivityState(nextActivity);
+  }
 
   function setSpot(nextSpot: Spot) {
     spotRef.current = nextSpot;
@@ -154,8 +165,10 @@ export function BuddyForestScene({
       return;
     }
 
+    const landingSpot = isBranchSpot(nextSpot) ? nextSpot : "center";
+
+    setSpot(landingSpot);
     setActivity("perching");
-    setSpot(nextSpot === "ground" ? "center" : nextSpot);
   }
 
   function startFlyingTo(nextSpot: Spot) {
@@ -166,7 +179,24 @@ export function BuddyForestScene({
 
     actionTimer.current = window.setTimeout(() => {
       settle(nextSpot);
-    }, 1850);
+    }, FLY_DURATION_MS);
+  }
+
+  function startHovering() {
+    clearActionTimer();
+
+    const airSpot = getRandomAirSpot();
+
+    setActivity("flying");
+    setSpot(airSpot);
+
+    actionTimer.current = window.setTimeout(() => {
+      setActivity("hovering");
+
+      actionTimer.current = window.setTimeout(() => {
+        startFlyingTo(getRandomBranchSpot());
+      }, HOVER_DURATION_MS);
+    }, FLY_DURATION_MS);
   }
 
   function startFlapping() {
@@ -175,20 +205,24 @@ export function BuddyForestScene({
     setActivity("flapping");
 
     actionTimer.current = window.setTimeout(() => {
-      settle(spotRef.current);
-    }, 1200);
+      setActivity("perching");
+    }, FLAP_PREP_MS);
   }
 
   function startForaging() {
     clearActionTimer();
 
-    setActivity("foraging");
+    setActivity("flying");
     setSpot("ground");
-    setBerryKey((key) => key + 1);
 
     actionTimer.current = window.setTimeout(() => {
-      settle("center");
-    }, 2600);
+      setActivity("foraging");
+      setBerryKey((key) => key + 1);
+
+      actionTimer.current = window.setTimeout(() => {
+        startFlyingTo("center");
+      }, FORAGE_DURATION_MS);
+    }, FLY_DURATION_MS);
   }
 
   function startAway() {
@@ -197,20 +231,62 @@ export function BuddyForestScene({
     setActivity("away");
 
     actionTimer.current = window.setTimeout(() => {
-      const returnSpot: Spot = Math.random() > 0.5 ? "left" : "right";
+      const returnSpot = getRandomBranchSpot();
 
       setActivity("returning");
       setSpot(returnSpot);
 
       actionTimer.current = window.setTimeout(() => {
         settle(returnSpot);
-      }, 1600);
-    }, 4600);
+      }, FLY_DURATION_MS);
+    }, AWAY_DURATION_MS);
   }
 
-  useEffect(() => {
-    activityRef.current = activity;
-  }, [activity]);
+  function runRandomAction() {
+    const currentActivity = activityRef.current;
+
+    if (
+      currentActivity === "petting" ||
+      currentActivity === "foraging" ||
+      currentActivity === "flying" ||
+      currentActivity === "hovering" ||
+      currentActivity === "flapping" ||
+      currentActivity === "away" ||
+      currentActivity === "returning" ||
+      currentActivity === "sleeping"
+    ) {
+      return;
+    }
+
+    const roll = Math.random();
+
+    if (roll < 0.28) {
+      startFlyingTo(getNextBranchSpot(spotRef.current));
+      return;
+    }
+
+    if (roll < 0.48) {
+      startHovering();
+      return;
+    }
+
+    if (roll < 0.66) {
+      startForaging();
+      return;
+    }
+
+    if (roll < 0.78) {
+      startAway();
+      return;
+    }
+
+    if (roll < 0.9) {
+      startFlapping();
+      return;
+    }
+
+    settle(spotRef.current);
+  }
 
   useEffect(() => {
     clearActionTimer();
@@ -231,48 +307,8 @@ export function BuddyForestScene({
     if (isNight) return;
 
     idleTimer.current = window.setInterval(() => {
-      const currentActivity = activityRef.current;
-
-      /**
-       * Do not interrupt an action that is already running.
-       */
-      if (
-        currentActivity === "petting" ||
-        currentActivity === "foraging" ||
-        currentActivity === "flying" ||
-        currentActivity === "flapping" ||
-        currentActivity === "away" ||
-        currentActivity === "returning" ||
-        currentActivity === "sleeping"
-      ) {
-        return;
-      }
-
-      const currentSpot = spotRef.current;
-      const next = pickNextActivity(currentSpot);
-
-      if (next.activity === "flying") {
-        startFlyingTo(next.spot);
-        return;
-      }
-
-      if (next.activity === "flapping") {
-        startFlapping();
-        return;
-      }
-
-      if (next.activity === "foraging") {
-        startForaging();
-        return;
-      }
-
-      if (next.activity === "away") {
-        startAway();
-        return;
-      }
-
-      settle(currentSpot);
-    }, 4200);
+      runRandomAction();
+    }, ACTION_INTERVAL_MS);
 
     return () => {
       clearIdleTimer();
@@ -289,19 +325,13 @@ export function BuddyForestScene({
 
     actionTimer.current = window.setTimeout(() => {
       settle(spotRef.current);
-    }, 1300);
+    }, PET_DURATION_MS);
   }, [petSignal, isNight]);
 
   useEffect(() => {
     if (gatherSignal <= 0 || isNight) return;
 
-    clearActionTimer();
-
-    setActivity("flying");
-
-    actionTimer.current = window.setTimeout(() => {
-      startForaging();
-    }, 650);
+    startForaging();
   }, [gatherSignal, isNight]);
 
   const stageClass = useMemo(() => {
@@ -315,7 +345,7 @@ export function BuddyForestScene({
     >
       <div className="buddy-picture-overlay" />
 
-      {!isAway && spot !== "ground" ? (
+      {!isAway && isBranchSpot(spot) ? (
         <img
           src="/assets/forest/branch.png"
           alt=""

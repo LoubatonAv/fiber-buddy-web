@@ -156,42 +156,92 @@ body,
     linear-gradient(180deg, rgba(3, 15, 27, 0.16), rgba(3, 15, 27, 0.32));
 }
 
-/* Ollie actor */
+/* =========================
+   OLLIE ACTOR - WEB DEFAULT
+   ========================= */
 
 .buddy-owl-actor-picture {
   position: absolute;
   z-index: 8;
+
   width: 132px;
   height: 132px;
+
   display: flex;
   align-items: flex-end;
   justify-content: center;
+
+  /*
+    left/top = Ollie's landing / hover point.
+    No scale changes anymore.
+  */
+  transform: translate(-50%, -100%);
+
   transition:
-    left 1.65s cubic-bezier(0.22, 0.86, 0.28, 1),
-    top 1.65s cubic-bezier(0.22, 0.86, 0.28, 1),
-    transform 1.65s cubic-bezier(0.22, 0.86, 0.28, 1),
+    left 3.2s cubic-bezier(0.22, 1, 0.36, 1),
+    top 3.2s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 420ms ease;
+
+  will-change: left, top;
 }
 
+/* WEB LANDING POINTS */
+
 .buddy-owl-actor-picture.spot-left {
-  left: 34px;
-  top: 142px;
+  left: 90px;
+  top: 225px;
 }
 
 .buddy-owl-actor-picture.spot-right {
-  left: 205px;
-  top: 156px;
+  left: 330px;
+  top: 325px;
 }
 
 .buddy-owl-actor-picture.spot-center {
-  left: 116px;
-  top: 128px;
+  left: 143px;
+  top: 470px;
 }
 
 .buddy-owl-actor-picture.spot-ground {
-  left: 122px;
-  top: 252px;
-  transform: scale(0.82);
+  left: 143px;
+  top: 470px;
+}
+
+/* WEB AIR / HOVER POINTS */
+
+.buddy-owl-actor-picture.spot-airLeft {
+  left: 86px;
+  top: 155px;
+}
+
+.buddy-owl-actor-picture.spot-airCenter {
+  left: 205px;
+  top: 165px;
+}
+
+.buddy-owl-actor-picture.spot-airRight {
+  left: 330px;
+  top: 190px;
+}
+
+/* Give hovering a tiny alive movement */
+
+.buddy-owl-actor-picture.activity-hovering {
+  animation: ollieHoverInPlace 1.8s ease-in-out infinite;
+}
+
+@keyframes ollieHoverInPlace {
+  0% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -8px;
+  }
+
+  100% {
+    translate: 0 0;
+  }
 }
 
 /* Clean perch */
@@ -407,39 +457,7 @@ body,
   }
 }
 
-/* Mobile / Pixel 7-ish */
-
-@media (max-width: 420px) {
-  .buddy-picture-stage {
-    height: 410px;
-    min-height: 410px;
-  }
-
-  .buddy-owl-actor-picture {
-    width: 142px;
-    height: 142px;
-  }
-
-  .buddy-owl-actor-picture.spot-right {
-    left: 178px;
-    top: 168px;
-  }
-
-  .buddy-owl-actor-picture.spot-center {
-    left: 104px;
-    top: 152px;
-  }
-
-  .buddy-owl-actor-picture.spot-left {
-    left: 24px;
-    top: 160px;
-  }
-
-  .buddy-owl-actor-picture.spot-ground {
-    left: 112px;
-    top: 256px;
-  }
-}
+/* Branches */
 
 .ollie-branch {
   position: absolute;
@@ -469,6 +487,8 @@ body,
   top: 238px;
   transform: rotate(5deg) scaleX(-1);
 }
+
+/* Speech bubbles */
 
 .owl-speech-bubble {
   position: absolute;
@@ -538,4 +558,56 @@ body,
 
   background: rgba(255, 249, 226, 0.96);
   transform: translateX(-50%) rotate(45deg);
+}
+
+/* =========================
+   OLLIE ACTOR - MOBILE
+   tune later separately
+   ========================= */
+
+@media (max-width: 420px) {
+  .buddy-picture-stage {
+    height: 410px;
+    min-height: 410px;
+  }
+
+  .buddy-owl-actor-picture {
+    width: 142px;
+    height: 142px;
+  }
+
+  .buddy-owl-actor-picture.spot-left {
+    left: 90px;
+    top: 225px;
+  }
+
+  .buddy-owl-actor-picture.spot-right {
+    left: 330px;
+    top: 325px;
+  }
+
+  .buddy-owl-actor-picture.spot-center {
+    left: 143px;
+    top: 470px;
+  }
+
+  .buddy-owl-actor-picture.spot-ground {
+    left: 143px;
+    top: 470px;
+  }
+
+  .buddy-owl-actor-picture.spot-airLeft {
+    left: 86px;
+    top: 155px;
+  }
+
+  .buddy-owl-actor-picture.spot-airCenter {
+    left: 205px;
+    top: 165px;
+  }
+
+  .buddy-owl-actor-picture.spot-airRight {
+    left: 330px;
+    top: 190px;
+  }
 }

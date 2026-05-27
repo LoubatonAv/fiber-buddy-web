@@ -212,3 +212,16 @@
     margin-top: 2px;
   }
 }
+
+/* While Ollie is standing on a branch, do not float/bob the body */
+.buddy-owl-actor-picture.activity-perching .owl-buddy,
+.buddy-owl-actor-picture.activity-perching .owl-png,
+.buddy-owl-actor-picture.activity-perching .ollie-png-buddy {
+  animation: none !important;
+  transition: none;
+}
+
+/* While idle, wings stay relaxed and body stays stable */
+.buddy-owl-actor-picture.activity-perching .ollie-wing {
+  animation: none !important;
+}
