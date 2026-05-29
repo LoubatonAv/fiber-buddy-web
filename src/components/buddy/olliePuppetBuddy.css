@@ -92,22 +92,89 @@
    ========================= */
 
 .ollie-puppet-wing {
-  width: 64px;
+  width: 180px;
   z-index: 4;
 }
 
+/* Base wing positions */
 .ollie-puppet-wing-left {
-  left: 20px;
-  top: 143px;
+  left: -80px;
+  top: 70px;
   transform-origin: 74% 20%;
   transform: rotate(0deg);
 }
 
 .ollie-puppet-wing-right {
-  left: 136px;
-  top: 143px;
+  left: 120px;
+  top: 70px;
   transform-origin: 26% 20%;
   transform: rotate(0deg);
+}
+
+/* =========================
+   WING FRAME POSITION FIXES
+   Goal: keep the shoulder/root visually stable
+   while each PNG frame changes.
+   ========================= */
+
+/* RELAXED */
+.ollie-puppet-buddy[data-wing-frame="relaxed"] .ollie-puppet-wing-left {
+  left: -80px;
+  top: 70px;
+  width: 180px;
+  transform: rotate(0deg);
+}
+
+.ollie-puppet-buddy[data-wing-frame="relaxed"] .ollie-puppet-wing-right {
+  left: 120px;
+  top: 70px;
+  width: 180px;
+  transform: rotate(0deg);
+}
+
+/* UP */
+.ollie-puppet-buddy[data-wing-frame="up"] .ollie-puppet-wing-left {
+  left: -83px;
+  top: 30px;
+  width: 180px;
+  transform: rotate(-4deg);
+}
+
+.ollie-puppet-buddy[data-wing-frame="up"] .ollie-puppet-wing-right {
+  left: 123px;
+  top: 30px;
+  width: 180px;
+  transform: rotate(4deg);
+}
+
+/* MID */
+.ollie-puppet-buddy[data-wing-frame="mid"] .ollie-puppet-wing-left {
+  left: -90px;
+  top: 66px;
+  width: 180px;
+  transform: rotate(0deg);
+}
+
+.ollie-puppet-buddy[data-wing-frame="mid"] .ollie-puppet-wing-right {
+  left: 130px;
+  top: 66px;
+  width: 180px;
+  transform: rotate(0deg);
+}
+
+/* DOWNSTROKE */
+.ollie-puppet-buddy[data-wing-frame="downstroke"] .ollie-puppet-wing-left {
+  left: -82px;
+  top: 84px;
+  width: 180px;
+  transform: rotate(3deg);
+}
+
+.ollie-puppet-buddy[data-wing-frame="downstroke"] .ollie-puppet-wing-right {
+  left: 122px;
+  top: 84px;
+  width: 180px;
+  transform: rotate(-3deg);
 }
 
 /* =========================
@@ -132,14 +199,6 @@
 
 .ollie-puppet-flying .ollie-puppet-head {
   animation: olliePuppetHeadFly 480ms ease-in-out infinite;
-}
-
-.ollie-puppet-flying .ollie-puppet-wing-left {
-  animation: olliePuppetLeftWingFlap 480ms ease-in-out infinite;
-}
-
-.ollie-puppet-flying .ollie-puppet-wing-right {
-  animation: olliePuppetRightWingFlap 480ms ease-in-out infinite;
 }
 
 .ollie-puppet-flying .ollie-puppet-foot-left,

@@ -207,6 +207,17 @@ body,
   top: 470px;
 }
 
+.ollie-puppet-buddy[data-wing-frame="relaxed"] .ollie-puppet-wing-left {
+  left: -50px;
+  top: 105px;
+  width: 180px;
+}
+
+.ollie-puppet-buddy[data-wing-frame="relaxed"] .ollie-puppet-wing-right {
+  left: 80px;
+  top: 105px;
+  width: 180px;
+}
 /* WEB AIR / HOVER POINTS */
 
 .buddy-owl-actor-picture.spot-airLeft {
