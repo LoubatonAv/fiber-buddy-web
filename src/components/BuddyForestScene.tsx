@@ -26,6 +26,9 @@ type Spot =
   | "airCenter"
   | "airRight";
 
+type BranchSpot = "left" | "right" | "center";
+type AirSpot = "airLeft" | "airCenter" | "airRight";
+
 type Props = {
   level: number;
   mood: Mood;
@@ -49,11 +52,27 @@ const PET_DURATION_MS = 1300;
 const AWAY_DURATION_MS = 4600;
 const ACTION_INTERVAL_MS = 4800;
 
-const BRANCH_SPOTS: Spot[] = ["left", "right", "center"];
-const AIR_SPOTS: Spot[] = ["airLeft", "airCenter", "airRight"];
+const BRANCH_SPOTS: BranchSpot[] = ["left", "right", "center"];
+const AIR_SPOTS: AirSpot[] = ["airLeft", "airCenter", "airRight"];
 
-function isBranchSpot(spot: Spot) {
-  return BRANCH_SPOTS.includes(spot);
+/*
+  Debug only:
+  Put "perching", "flapping", "flying", "hovering", "foraging",
+  "petting", "away", "returning", or "sleeping" here to freeze Ollie's activity.
+  Put null to use normal behavior.
+*/
+const DEBUG_FORCE_ACTIVITY: Activity | null = "perching";
+
+/*
+  Debug only:
+  Put "left", "right", "center", "ground",
+  "airLeft", "airCenter", or "airRight" here to freeze Ollie's position.
+  Put null to use normal behavior.
+*/
+const DEBUG_FORCE_SPOT: Spot | null = "airCenter";
+
+function isBranchSpot(spot: Spot): spot is BranchSpot {
+  return BRANCH_SPOTS.includes(spot as BranchSpot);
 }
 
 function getOwlMessage(activity: Activity, owlName: string) {
@@ -86,18 +105,18 @@ function getOwlBuddyActivity(activity: Activity): OwlBuddyActivity {
   return "idle";
 }
 
-function getNextBranchSpot(currentSpot: Spot): Spot {
+function getNextBranchSpot(currentSpot: Spot): BranchSpot {
   if (currentSpot === "left") return "right";
   if (currentSpot === "right") return "center";
   return "left";
 }
 
-function getRandomAirSpot(): Spot {
-  return AIR_SPOTS[Math.floor(Math.random() * AIR_SPOTS.length)];
+function getRandomBranchSpot(): BranchSpot {
+  return BRANCH_SPOTS[Math.floor(Math.random() * BRANCH_SPOTS.length)];
 }
 
-function getRandomBranchSpot(): Spot {
-  return BRANCH_SPOTS[Math.floor(Math.random() * BRANCH_SPOTS.length)];
+function getRandomAirSpot(): AirSpot {
+  return AIR_SPOTS[Math.floor(Math.random() * AIR_SPOTS.length)];
 }
 
 export function BuddyForestScene({
@@ -108,12 +127,12 @@ export function BuddyForestScene({
 }: Props) {
   const period = useForestPeriod();
 
-  /**
-   * Later:
-   * const isNight = period === "night";
-   *
-   * For testing:
-   */
+  /*
+    Later, for real night behavior:
+    const isNight = period === "night";
+
+    For testing:
+  */
   const isNight = false;
 
   const [activity, setActivityState] = useState<Activity>(
@@ -125,12 +144,19 @@ export function BuddyForestScene({
 
   const activityRef = useRef<Activity>(activity);
   const spotRef = useRef<Spot>(spot);
+
   const actionTimer = useRef<number | null>(null);
   const idleTimer = useRef<number | null>(null);
 
-  const isAway = activity === "away";
+  const isDebugForced =
+    DEBUG_FORCE_ACTIVITY !== null || DEBUG_FORCE_SPOT !== null;
+
+  const visualActivity = DEBUG_FORCE_ACTIVITY ?? activity;
+  const visualSpot = DEBUG_FORCE_SPOT ?? spot;
+
+  const isAway = visualActivity === "away";
   const sceneLevel = Math.min(5, Math.max(1, level));
-  const owlBuddyActivity = getOwlBuddyActivity(activity);
+  const owlBuddyActivity = getOwlBuddyActivity(visualActivity);
 
   function setActivity(nextActivity: Activity) {
     activityRef.current = nextActivity;
@@ -289,6 +315,12 @@ export function BuddyForestScene({
   }
 
   useEffect(() => {
+    if (isDebugForced) {
+      clearActionTimer();
+      clearIdleTimer();
+      return;
+    }
+
     clearActionTimer();
 
     if (isNight) {
@@ -299,12 +331,12 @@ export function BuddyForestScene({
 
     setActivity("perching");
     setSpot("left");
-  }, [isNight]);
+  }, [isNight, isDebugForced]);
 
   useEffect(() => {
     clearIdleTimer();
 
-    if (isNight) return;
+    if (isNight || isDebugForced) return;
 
     idleTimer.current = window.setInterval(() => {
       runRandomAction();
@@ -314,10 +346,10 @@ export function BuddyForestScene({
       clearIdleTimer();
       clearActionTimer();
     };
-  }, [isNight]);
+  }, [isNight, isDebugForced]);
 
   useEffect(() => {
-    if (petSignal <= 0 || isNight) return;
+    if (petSignal <= 0 || isNight || isDebugForced) return;
 
     clearActionTimer();
 
@@ -326,13 +358,13 @@ export function BuddyForestScene({
     actionTimer.current = window.setTimeout(() => {
       settle(spotRef.current);
     }, PET_DURATION_MS);
-  }, [petSignal, isNight]);
+  }, [petSignal, isNight, isDebugForced]);
 
   useEffect(() => {
-    if (gatherSignal <= 0 || isNight) return;
+    if (gatherSignal <= 0 || isNight || isDebugForced) return;
 
     startForaging();
-  }, [gatherSignal, isNight]);
+  }, [gatherSignal, isNight, isDebugForced]);
 
   const stageClass = useMemo(() => {
     return `buddy-picture-stage buddy-scene-${period} buddy-level-${sceneLevel}`;
@@ -345,11 +377,11 @@ export function BuddyForestScene({
     >
       <div className="buddy-picture-overlay" />
 
-      {!isAway && isBranchSpot(spot) ? (
+      {!isAway && isBranchSpot(visualSpot) ? (
         <img
           src="/assets/forest/branch.png"
           alt=""
-          className={`ollie-branch ollie-branch-${spot}`}
+          className={`ollie-branch ollie-branch-${visualSpot}`}
           draggable={false}
         />
       ) : null}
@@ -363,21 +395,21 @@ export function BuddyForestScene({
         </div>
       ) : (
         <div
-          className={`buddy-owl-actor-picture spot-${spot} activity-${activity}`}
+          className={`buddy-owl-actor-picture spot-${visualSpot} activity-${visualActivity}`}
         >
-          {activity !== "perching" ? (
+          {visualActivity !== "perching" ? (
             <div className="owl-action-bubble">
-              {getOwlMessage(activity, owlName)}
+              {getOwlMessage(visualActivity, owlName)}
             </div>
           ) : null}
 
           <OwlBuddy activity={owlBuddyActivity} />
 
-          {activity === "petting" ? (
+          {visualActivity === "petting" ? (
             <div className="buddy-heart-pop">💛</div>
           ) : null}
 
-          {activity === "foraging" ? (
+          {visualActivity === "foraging" ? (
             <div key={berryKey} className="buddy-berry-pickup">
               🫐
             </div>
@@ -385,7 +417,7 @@ export function BuddyForestScene({
         </div>
       )}
 
-      {activity === "foraging" ? (
+      {visualActivity === "foraging" ? (
         <div className="buddy-ground-berries" aria-hidden="true">
           <span>🫐</span>
           <span>🍓</span>

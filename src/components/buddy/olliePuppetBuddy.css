@@ -1,0 +1,235 @@
+.ollie-puppet-buddy {
+  position: relative;
+  width: 220px;
+  height: 260px;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center bottom;
+}
+
+.ollie-puppet-part {
+  position: absolute;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* =========================
+   BODY PARTS
+   ========================= */
+
+.ollie-puppet-torso {
+  left: 33px;
+  top: 147px;
+  width: 154px;
+  z-index: 3;
+  transform-origin: center bottom;
+}
+
+.ollie-puppet-head {
+  left: 18px;
+  top: 8px;
+  width: 184px;
+  z-index: 6;
+  transform-origin: 50% 78%;
+}
+
+.ollie-puppet-eye-left {
+  left: 55px;
+  top: 90px;
+  width: 43px;
+  z-index: 8;
+  transform-origin: center center;
+}
+
+.ollie-puppet-eye-right {
+  left: 123px;
+  top: 90px;
+  width: 42px;
+  z-index: 8;
+  transform-origin: center center;
+}
+
+.ollie-puppet-brow-left {
+  left: 65px;
+  top: 75px;
+  width: 25px;
+  z-index: 9;
+}
+
+.ollie-puppet-brow-right {
+  left: 131px;
+  top: 75px;
+  width: 25px;
+  z-index: 9;
+}
+
+.ollie-puppet-beak {
+  left: 99px;
+  top: 115px;
+  width: 22px;
+  z-index: 9;
+}
+
+.ollie-puppet-foot-left {
+  left: 66px;
+  top: 215px;
+  width: 36px;
+  z-index: 7;
+}
+
+.ollie-puppet-foot-right {
+  left: 120px;
+  top: 215px;
+  width: 36px;
+  z-index: 7;
+}
+
+/* =========================
+   WINGS
+   ========================= */
+
+.ollie-puppet-wing {
+  width: 64px;
+  z-index: 4;
+}
+
+.ollie-puppet-wing-left {
+  left: 20px;
+  top: 143px;
+  transform-origin: 74% 20%;
+  transform: rotate(0deg);
+}
+
+.ollie-puppet-wing-right {
+  left: 136px;
+  top: 143px;
+  transform-origin: 26% 20%;
+  transform: rotate(0deg);
+}
+
+/* =========================
+   IDLE
+   ========================= */
+
+.ollie-puppet-idle .ollie-puppet-head {
+  animation: olliePuppetHeadIdle 7s ease-in-out infinite;
+}
+
+.ollie-puppet-idle .ollie-puppet-eye {
+  animation: olliePuppetBlink 6s ease-in-out infinite;
+}
+
+/* =========================
+   FLYING
+   ========================= */
+
+.ollie-puppet-flying .ollie-puppet-torso {
+  animation: olliePuppetTorsoFly 480ms ease-in-out infinite;
+}
+
+.ollie-puppet-flying .ollie-puppet-head {
+  animation: olliePuppetHeadFly 480ms ease-in-out infinite;
+}
+
+.ollie-puppet-flying .ollie-puppet-wing-left {
+  animation: olliePuppetLeftWingFlap 480ms ease-in-out infinite;
+}
+
+.ollie-puppet-flying .ollie-puppet-wing-right {
+  animation: olliePuppetRightWingFlap 480ms ease-in-out infinite;
+}
+
+.ollie-puppet-flying .ollie-puppet-foot-left,
+.ollie-puppet-flying .ollie-puppet-foot-right {
+  animation: olliePuppetFeetTuck 480ms ease-in-out infinite;
+}
+
+/* =========================
+   ANIMATIONS
+   ========================= */
+
+@keyframes olliePuppetHeadIdle {
+  0%,
+  82%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  88% {
+    transform: rotate(-3deg);
+  }
+
+  94% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes olliePuppetBlink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  95% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes olliePuppetTorsoFly {
+  0%,
+  100% {
+    transform: scaleX(0.98) scaleY(1.03);
+  }
+
+  50% {
+    transform: scaleX(1.035) scaleY(0.965);
+  }
+}
+
+@keyframes olliePuppetHeadFly {
+  0%,
+  100% {
+    transform: translateY(-1px) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(2px) rotate(1deg);
+  }
+}
+
+@keyframes olliePuppetLeftWingFlap {
+  0%,
+  100% {
+    transform: translateY(-28px) rotate(-42deg);
+  }
+
+  50% {
+    transform: translateY(26px) rotate(28deg);
+  }
+}
+
+@keyframes olliePuppetRightWingFlap {
+  0%,
+  100% {
+    transform: translateY(-28px) rotate(42deg);
+  }
+
+  50% {
+    transform: translateY(26px) rotate(-28deg);
+  }
+}
+
+@keyframes olliePuppetFeetTuck {
+  0%,
+  100% {
+    transform: translateY(-2px) scaleY(0.9);
+  }
+
+  50% {
+    transform: translateY(3px) scaleY(1);
+  }
+}

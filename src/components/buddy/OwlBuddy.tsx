@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { OlliePngBuddy, type WingFrame } from "./OlliePngBuddy";
 import "./owlBuddy.css";
+import { OlliePuppetBuddy } from "./OlliePuppetBuddy";
 
 type Props = {
   activity: "idle" | "sleeping" | "happy" | "flying";
@@ -81,7 +82,7 @@ export function OwlBuddy({ activity }: Props) {
         hello ? "owl-hello" : `owl-${activity}`
       } owl-idle-${idleBehavior}`}
     >
-      <OlliePngBuddy className="owl-png" wingFrame={wingFrame} />
+      <OlliePuppetBuddy className="owl-png" activity={activity} />
     </div>
   );
 }
